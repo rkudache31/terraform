@@ -1,0 +1,34 @@
+data "azurerm_network_interface" "nic" {
+name=var.nic_name
+resource_group_name= var.resource_group_name
+}
+resource "azurerm_linux_virtual_machine" "linux_vm" {
+name    = var.name
+resource_group_name= var.resource_group_name
+location = var.location
+size=var.size
+admin_username=var.admin_username
+admin_password=var.admin_password
+network_interface_ids=[data.azurerm_network_interface.nic.id]
+disable_password_authentication="false"
+os_disk {
+caching = var.caching
+storage_account_type=var.storage_account_type
+}
+source_image_reference {
+publisher = var.publisher
+offer = var.offer
+sku = var.sku
+version=var.version_name
+}
+
+}
+
+data "azurerm_public_ip" "aip" {
+name="mypip32"
+resource_group_name=var.resource_group_name
+}
+
+output "public_ip_address" {
+value=data.azurerm_public_ip.aip.ip_address
+}
